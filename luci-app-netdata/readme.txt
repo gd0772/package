@@ -1,9 +1,9 @@
-luci-app-netdata for OpenWRT/Lede(÷–Œƒ)
+luci-app-netdata for OpenWRT/Lede(√ñ√ê√é√Ñ)
 
 
 Install to OpenWRT/LEDE
 
-git clone https://github.com/sirpdboy/luci-app-netdata
+git clone https://github.com/gd0772/gd772-package/tree/main/luci-app-netdata
 cp -r luci-app-netdata LEDE_DIR/package/luci-app-netdata
 
 cd LEDE_DIR
