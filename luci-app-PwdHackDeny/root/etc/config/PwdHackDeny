@@ -1,0 +1,5 @@
+config PwdHackDeny 'PwdHackDeny'
+	option enabled '0'
+	option port1 '22'
+	option port2 '80'
+

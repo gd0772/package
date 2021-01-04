@@ -1,0 +1,13 @@
+#!/bin/sh
+
+uci -q batch <<-EOF >/dev/null
+	delete ucitrack.@PwdHackDeny[-1]
+	add ucitrack PwdHackDeny
+	set ucitrack.@PwdHackDeny[-1].init=PwdHackDeny
+	commit ucitrack
+EOF
+        echo "/etc/badip.dropbear" >> /etc/sysupgrade.conf
+        echo "/etc/badip.router" >> /etc/sysupgrade.conf
+
+rm -f /tmp/luci-indexcache
+exit 0

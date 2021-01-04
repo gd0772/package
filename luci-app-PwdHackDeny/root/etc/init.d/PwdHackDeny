@@ -1,0 +1,50 @@
+#!/bin/sh /etc/rc.common
+# by wulishui 20200120
+# Author: wulishui <wulishui@gmail.com>
+
+START=99
+
+start()
+{
+enabled=$(uci get PwdHackDeny.PwdHackDeny.enabled 2>/dev/null)
+port1=$(uci get dropbear.@dropbear[-1].Port)
+port2=$(cat /etc/config/uhttpd|sed '/'#'/d'|grep "list listen_http"|sed 's/[:.]/ /g'| awk '{print $(7)}'|sed '/^ *$/d')
+
+stop
+
+if [ "$enabled" == 1 ]; then
+
+ipset create dropbearbadip hash:ip 2>/dev/null
+ipset create routerbadip hash:ip   2>/dev/null
+
+created=$(iptables -L INPUT|grep -n -i "dropbearbadip" 2>/dev/null)
+if [ -z "$created" ]; then
+iptables -I INPUT -m set --match-set dropbearbadip src -p tcp --dport "$port1" -j DROP 2>/dev/null
+fi
+
+created2=$(iptables -L INPUT|grep -n -i "routerbadip" 2>/dev/null)
+if [ -z "$created2" ]; then
+iptables -I INPUT -m set --match-set routerbadip src -p tcp --dport "$port2" -j DROP 2>/dev/null
+fi
+
+/etc/PwdHackDeny.sh &
+
+fi
+}
+
+stop()
+{
+kill -9 `pgrep PwdHackDeny.sh` 2>/dev/null
+port1=$(uci get dropbear.@dropbear[-1].Port)
+port2=$(cat /etc/config/uhttpd|sed '/'#'/d'|grep "list listen_http"|sed 's/[:.]/ /g'| awk '{print $(7)}'|sed '/^ *$/d')
+iptables -D INPUT -m set --match-set dropbearbadip src -p tcp --dport "$port1" -j DROP 2>/dev/null
+iptables -D INPUT -m set --match-set routerbadip src -p tcp --dport "$port2" -j DROP 2>/dev/null
+}
+
+restart()
+{
+	stop
+	start
+}
+
+
