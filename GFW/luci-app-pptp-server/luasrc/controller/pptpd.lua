@@ -6,7 +6,7 @@ function index()
 
     entry({"admin", "vpn"}, firstchild(), "GFW", 45).dependent = false
     entry({"admin", "vpn", "pptpd"}, alias("admin", "vpn", "pptpd", "settings"),
-          _("PPTP VPN Server"), 48)
+          _("PPTP 服务器"), 48)
     entry({"admin", "vpn", "pptpd", "settings"}, cbi("pptpd/settings"),
           _("General Settings"), 10).leaf = true
     entry({"admin", "vpn", "pptpd", "users"}, cbi("pptpd/users"),
