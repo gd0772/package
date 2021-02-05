@@ -43,4 +43,3 @@ $(eval $(call BuildPackage,luci-app-argon-config))
 
 # call BuildPackage - OpenWrt buildroot signature
 
-
