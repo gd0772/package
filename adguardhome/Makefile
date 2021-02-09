@@ -7,7 +7,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=AdGuardHome
 PKG_DOWNLOAD:=download
-PKG_VERSION:=v0.105.0-beta.2
+PKG_VERSION:=v0.105.0-beta.4
 
 ifeq ($(ARCH),i386)
 	PKG_ARCH:=386
