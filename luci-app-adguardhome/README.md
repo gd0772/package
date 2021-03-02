@@ -1,4 +1,4 @@
-﻿# luci-app-adguardhome
+# luci-app-adguardhome
 复杂的AdGuardHome的openwrt的luci界面
 
  - 可以管理网页端口
