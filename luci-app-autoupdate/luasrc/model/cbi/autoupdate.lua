@@ -43,7 +43,7 @@ local cloud_nightly_version = luci.sys.exec("cat /tmp/cloud_nightly_version")
 local cloud_stable_version = luci.sys.exec("cat /tmp/cloud_stable_version")
 
 button_upgrade_nightly_firmware = s:option (Button, "_button_upgrade_nightly_firmware", translate("Upgrade to Nightly Version"),
-translatef("点击上方 执行更新 后请耐心等待至路由器重启.") .. "<br><br>设备名称: " ..current_model .. "<br>当前固件版本: " .. current_version .. "<br>云端最新版本: " .. cloud_nightly_version)
+translatef("点击上方 执行更新 后请耐心等待至路由器重启.") .. "<br><br>设备名称: " ..current_model .. "<br>当前固件版本: " .. current_version .. "<br>云端固件版本: " .. cloud_nightly_version)
 button_upgrade_nightly_firmware.inputtitle = translate ("Do Upgrade")
 button_upgrade_nightly_firmware.write = function()
 	luci.sys.call ("bash /bin/AutoUpdate.sh -u > /dev/null")
