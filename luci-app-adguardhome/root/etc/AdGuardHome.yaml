@@ -1,8 +1,8 @@
 bind_host: 0.0.0.0
 bind_port: 3000
 users:
-- name: admin
-  password: $2y$10$vHRcARdPCieYG3RXWomV5evDYN.Nj/edtwEkQgQJZcK6z7qTLaIc6
+- name: root
+  password: $2a$10$lfFMPIwjeuYdjVhP18GNGOLb3FPcycrKdslei0FyR2L/9Upctqpbm
 http_proxy: ""
 language: zh-cn
 rlimit_nofile: 0
