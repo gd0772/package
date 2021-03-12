@@ -1,0 +1,38 @@
+msgid "AutoUpdate"
+msgstr "固件更新"
+
+msgid "xWeek Day"
+msgstr "更新时间"
+
+msgid "Everyday"
+msgstr "每天"
+
+msgid "Day"
+msgstr "天"
+
+msgid "xHour"
+msgstr "时 [0~23]"
+
+msgid "xMinute"
+msgstr "分 [0~59]"
+
+msgid "Check Update"
+msgstr "检查更新"
+
+msgid "Enable AutoUpdate"
+msgstr "启用定时更新"
+
+msgid "Scheduled Update is a timed run Openwrt-AutoUpdate application"
+msgstr "固件更新是一个 定时执行更新固件的脚本 前提是【保持网络畅通，且能完全访问及下载 github 文件。已知 github 被列入 GFW 黑名单，请自行 挂梯子】"
+
+msgid "Do Upgrade"
+msgstr "手动更新"
+
+msgid "Upgrade to Latested Version"
+msgstr "更新固件"
+
+msgid "Automatically update firmware during the specified time"
+msgstr "启用后将在指定时间段自动检查并更新固件"
+
+msgid "Github Url"
+msgstr "Github 地址"
