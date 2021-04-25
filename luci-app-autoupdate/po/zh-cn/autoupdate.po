@@ -1,5 +1,5 @@
 msgid "AutoUpdate"
-msgstr "固件更新"
+msgstr "定时更新"
 
 msgid "xWeek Day"
 msgstr "更新时间"
