@@ -23,7 +23,7 @@ msgid "Enable AutoUpdate"
 msgstr "启用定时更新"
 
 msgid "Scheduled Update is a timed run Openwrt-AutoUpdate application"
-msgstr "是一个 定时执行更新固件脚本 的应用"
+msgstr "定时更新是一个 定时执行更新固件脚本 的应用"
 
 msgid "Do Upgrade"
 msgstr "手动更新"
