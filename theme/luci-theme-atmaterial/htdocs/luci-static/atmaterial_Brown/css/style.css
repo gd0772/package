@@ -503,7 +503,10 @@ color: #8965e0!important;
     content: "\e00b";
    color: #f3a4b5!important;
 }
-
+.main > .main-left > .nav > .slide > a[data-title="Docker"]:before {
+    content: "\e016";
+   color: #6699FF!important;
+}
 .main > .main-left > .nav > .slide > a[data-title="Control"]:before {
     content: "\e021";
   color: #FFD700!important;
