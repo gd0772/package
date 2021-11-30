@@ -14,7 +14,7 @@ web_session_ttl: 720
 dns:
   bind_hosts:
   - 0.0.0.0
-  port: 5553
+  port: 52
   statistics_interval: 1
   querylog_enabled: true
   querylog_file_enabled: true
@@ -22,10 +22,10 @@ dns:
   querylog_size_memory: 1000
   anonymize_client_ip: false
   protection_enabled: true
-  blocking_mode: default
+  blocking_mode: nxdomain
   blocking_ipv4: ""
   blocking_ipv6: ""
-  blocked_response_ttl: 10
+  blocked_response_ttl: 60
   parental_block_host: family-block.dns.adguard.com
   safebrowsing_block_host: standard-block.dns.adguard.com
   ratelimit: 0
@@ -33,7 +33,6 @@ dns:
   refuse_any: true
   upstream_dns:
   - 223.5.5.5
-  - 223.6.6.6
   - 119.29.29.29
   upstream_dns_file: ""
   bootstrap_dns:
@@ -90,33 +89,41 @@ tls:
   private_key_path: ""
 filters:
 - enabled: true
-  url: http://sub.adtchrome.com/adt-chinalist-easylist.txt
-  name: 广告终结者使用的拦截规则，基于ChinaList+EasyList修正维护
-  id: 139789181
+  url: https://easylist-downloads.adblockplus.org/abp-filters-anti-cv.txt
+  name: ABP filters
+  id: 1638228724
 - enabled: true
-  url: https://cdn.jsdelivr.net/gh/privacy-protection-tools/anti-AD@master/anti-ad-easylist.txt
-  name: anti-AD命中率最高列表
-  id: 139789122
+  url: https://easylist-downloads.adblockplus.org/exceptionrules.txt
+  name: Allow nonintrusive advertising
+  id: 1638228725
+- enabled: true
+  url: https://anti-ad.net/easylist.txt
+  name: 'CHN: anti-AD'
+  id: 1638228726
+- enabled: true
+  url: https://easylist-downloads.adblockplus.org/easylistchina+easylist.txt
+  name: EasyList China+EasyList
+  id: 1638228727
+- enabled: true
+  url: https://easylist-downloads.adblockplus.org/easyprivacy.txt
+  name: EasyPrivacy
+  id: 1638228728
+- enabled: true
+  url: https://easylist-downloads.adblockplus.org/fanboy-social.txt
+  name: Fanboy's Social Blocking List
+  id: 1638228729
+- enabled: true
+  url: https://easylist-downloads.adblockplus.org/fanboy-notifications.txt
+  name: Fanboy's Notifications Blocking List
+  id: 1638228730
 - enabled: true
   url: https://gitee.com/halflife/list/raw/master/ad.txt
   name: halflife合并乘风
-  id: 139789131
+  id: 1638228731
 - enabled: true
-  url: https://easylist.to/easylist/easyprivacy.txt
-  name: EasyPrivacy隐私相关
-  id: 139789132
-- enabled: true
-  url: https://raw.githubusercontent.com/BlueSkyXN/AdGuardHomeRules/master/all.txt
-  name: 百万ADH广告拦截过滤规则
-  id: 139789141
-- enabled: true
-  url: https://raw.githubusercontent.com/jerryn70/GoodbyeAds/master/Hosts/GoodbyeAds-Ultra.txt
-  name: GoodbyeAds 大全去广告
-  id: 139789142
-- enabled: true
-  url: https://gist.githubusercontent.com/Ewpratten/a25ae63a7200c02c850fede2f32453cf/raw/b9318009399b99e822515d388b8458557d828c37/hosts-yt-ads
-  name: YouTube-去广告
-  id: 139789143
+  url: https://easylist-downloads.adblockplus.org/i_dont_care_about_cookies.txt
+  name: I don't care about cookies
+  id: 1638228732
 whitelist_filters: []
 user_rules:
 - '@@||taobao.com^$important'
