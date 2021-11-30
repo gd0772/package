@@ -14,7 +14,7 @@ web_session_ttl: 720
 dns:
   bind_hosts:
   - 0.0.0.0
-  port: 5553
+  port: 52
   statistics_interval: 1
   querylog_enabled: true
   querylog_file_enabled: true
@@ -22,10 +22,10 @@ dns:
   querylog_size_memory: 1000
   anonymize_client_ip: false
   protection_enabled: true
-  blocking_mode: default
+  blocking_mode: nxdomain
   blocking_ipv4: ""
   blocking_ipv6: ""
-  blocked_response_ttl: 10
+  blocked_response_ttl: 60
   parental_block_host: family-block.dns.adguard.com
   safebrowsing_block_host: standard-block.dns.adguard.com
   ratelimit: 0
@@ -33,7 +33,6 @@ dns:
   refuse_any: true
   upstream_dns:
   - 223.5.5.5
-  - 223.6.6.6
   - 119.29.29.29
   upstream_dns_file: ""
   bootstrap_dns:
@@ -90,121 +89,41 @@ tls:
   private_key_path: ""
 filters:
 - enabled: true
-  url: http://sub.adtchrome.com/adt-chinalist-easylist.txt
-  name: 广告终结者使用的拦截规则，基于ChinaList+EasyList修正维护
-  id: 139789181
-- enabled: false
-  url: https://easylist-downloads.adblockplus.org/easylist.txt
-  name: EasyList-去除国际网页中大多数广告，包括不需要的框架、图像和对象
-  id: 139789112
-- enabled: false
-  url: https://easylist-downloads.adblockplus.org/easylistchina.txt
-  name: EasyList China-EasyList针对国内的补充规则
-  id: 139789121
+  url: https://easylist-downloads.adblockplus.org/abp-filters-anti-cv.txt
+  name: ABP filters
+  id: 1638228724
 - enabled: true
-  url: https://cdn.jsdelivr.net/gh/privacy-protection-tools/anti-AD@master/anti-ad-easylist.txt
-  name: anti-AD命中率最高列表
-  id: 139789122
+  url: https://easylist-downloads.adblockplus.org/exceptionrules.txt
+  name: Allow nonintrusive advertising
+  id: 1638228725
+- enabled: true
+  url: https://anti-ad.net/easylist.txt
+  name: 'CHN: anti-AD'
+  id: 1638228726
+- enabled: true
+  url: https://easylist-downloads.adblockplus.org/easylistchina+easylist.txt
+  name: EasyList China+EasyList
+  id: 1638228727
+- enabled: true
+  url: https://easylist-downloads.adblockplus.org/easyprivacy.txt
+  name: EasyPrivacy
+  id: 1638228728
+- enabled: true
+  url: https://easylist-downloads.adblockplus.org/fanboy-social.txt
+  name: Fanboy's Social Blocking List
+  id: 1638228729
+- enabled: true
+  url: https://easylist-downloads.adblockplus.org/fanboy-notifications.txt
+  name: Fanboy's Notifications Blocking List
+  id: 1638228730
 - enabled: true
   url: https://gitee.com/halflife/list/raw/master/ad.txt
   name: halflife合并乘风
-  id: 139789131
+  id: 1638228731
 - enabled: true
-  url: https://easylist.to/easylist/easyprivacy.txt
-  name: EasyPrivacy隐私相关
-  id: 139789132
-- enabled: false
-  url: https://www.i-dont-care-about-cookies.eu/abp/
-  name: I don't care about cookies隐私相关
-  id: 139789133
-- enabled: true
-  url: https://raw.githubusercontent.com/BlueSkyXN/AdGuardHomeRules/master/all.txt
-  name: 百万ADH广告拦截过滤规则
-  id: 139789141
-- enabled: true
-  url: https://raw.githubusercontent.com/jerryn70/GoodbyeAds/master/Hosts/GoodbyeAds-Ultra.txt
-  name: GoodbyeAds 大全去广告
-  id: 139789142
-- enabled: true
-  url: https://gist.githubusercontent.com/Ewpratten/a25ae63a7200c02c850fede2f32453cf/raw/b9318009399b99e822515d388b8458557d828c37/hosts-yt-ads
-  name: YouTube-去广告
-  id: 139789143
-- enabled: false
-  url: https://raw.githubusercontent.com/Goooler/1024_hosts/master/hosts
-  name: 1024host
-  id: 139789151
-- enabled: false
-  url: https://pgl.yoyo.org/adservers/serverlist.php?hostformat=hosts&showintro=1&mimetype=plaintext
-  name: Peter Lowe’s Ad and tracking server list​
-  id: 139789152
-- enabled: false
-  url: https://easylist.to/easylist/fanboy-social.txt
-  name: Fanboy's Social Blocking List
-  id: 139789153
-- enabled: false
-  url: https://easylist.to/easylist/fanboy-annoyance.txt
-  name: Fanboy's Annoyance List
-  id: 139789154
-- enabled: false
-  url: https://secure.fanboy.co.nz/fanboy-cookiemonster.txt
-  name: EasyList Cookie List
-  id: 139789155
-- enabled: false
-  url: https://fanboy.co.nz/fanboy-antifacebook.txt
-  name: Anti-Facebook List
-  id: 139789161
-- enabled: false
-  url: https://filters.adtidy.org/extension/ublock/filters/14.txt
-  name: AdGuard Annoyances filter
-  id: 139789162
-- enabled: false
-  url: https://www.malwaredomainlist.com/hostslist/hosts.txt
-  name: MalwareDomainList.com Hosts List
-  id: 139789163
-- enabled: false
-  url: https://www.fanboy.co.nz/enhancedstats.txt
-  name: Fanboy's Enhanced Tracking List
-  id: 139789164
-- enabled: false
-  url: https://filters.adtidy.org/extension/ublock/filters/3.txt
-  name: AdGuard Tracking Protection filter
-  id: 139789165
-- enabled: false
-  url: https://easylist.to/easylist/easylist.txt
-  name: EasyList
-  id: 139789171
-- enabled: false
-  url: https://filters.adtidy.org/extension/ublock/filters/11.txt
-  name: AdGuard Mobile Ads filter
-  id: 139789172
-- enabled: false
-  url: https://filters.adtidy.org/extension/ublock/filters/2_without_easylist.txt
-  name: AdGuard Base filter
-  id: 139789173
-- enabled: false
-  url: https://easylist-downloads.adblockplus.org/antiadblockfilters.txt
-  name: Adblock Warning Removal List
-  id: 139789174
-- enabled: false
-  url: https://fanboy.co.nz/fanboy-problematic-sites.txt
-  name: Fanboy's problematic-sites
-  id: 139789175
-- enabled: false
-  url: https://raw.githubusercontent.com/adbyby/xwhyc-rules/master/lazy.txt
-  name: Adbyby Lazy Rule
-  id: 139789182
-- enabled: false
-  url: https://raw.githubusercontent.com/VeleSila/yhosts/master/hosts.txt
-  name: hosts
-  id: 139789183
-- enabled: false
-  url: https://gitlab.com/xuhaiyang1234/AAK-Cont/raw/master/FINAL_BUILD/aak-cont-list-notubo.txt
-  name: aak-cont-list-notubo
-  id: 139789184
-- enabled: false
-  url: https://adaway.org/hosts.txt
-  name: Adaway HOST
-  id: 139789187
+  url: https://easylist-downloads.adblockplus.org/i_dont_care_about_cookies.txt
+  name: I don't care about cookies
+  id: 1638228732
 whitelist_filters: []
 user_rules:
 - '@@||taobao.com^$important'
