@@ -1,37 +1,23 @@
 /**
- *  Argon is a clean HTML5 theme for LuCI. It is based on luci-theme-material and Argon Template
- *
- *  luci-theme-argon
- *      Copyright 2019 Jerrykuku <jerrykuku@qq.com>
- *
- *  Have a bug? Please create an issue here on GitHub!
- *      https://github.com/jerrykuku/luci-theme-argon/issues
- *
- *  luci-theme-bootstrap:
- *      Copyright 2008 Steven Barth <steven@midlink.org>
- *      Copyright 2008 Jo-Philipp Wich <jow@openwrt.org>
- *      Copyright 2012 David Menting <david@nut-bolt.nl>
- *
- *  MUI:
- *      https://github.com/muicss/mui
- *
- *  luci-theme-material:
- *      https://github.com/LuttyYang/luci-theme-material/
- *
- *  Agron Theme
- *	    https://demos.creative-tim.com/argon-dashboard/index.html
- *
- *  Login background
- *      https://unsplash.com/
- *
- *  Licensed to the public under the Apache License 2.0
- */
-
-/*
- *  Font generate by Icomoon<icomoon.io>
+* opentopd is a clean HTML5 theme for LuCI. It is based on luci-theme-Argon and MUI
+* luci-theme-opentopd
+*   Copyright 2019-2021 sirpdboy <sirpdboy@qq.com>
+*	Have a bug? Please create an issue here on GitHub!
+*	https://github.com/sirpdboy/luci-theme-opentopd/issues
+*	
+*	luci-theme-material:
+*	Copyright 2015 Lutty Yang
+*
+*	luci-theme-bootstrap:
+*	Copyright 2008 Steven Barth <steven@midlink.org>
+*	Copyright 2008-2016 Jo-Philipp Wich <jow@openwrt.org>
+*	Copyright 2012 David Menting <david@nut-bolt.nl>
+*	MUI:
+*	https://github.com/muicss/mui
+*
+*	Licensed to the public under the Apache License 2.0
  */
 (function ($) {
-	$(".main > .loading").hide();
     $(".main > .loading").fadeOut();
 
     /**
@@ -48,16 +34,16 @@
     var mainNodeName = undefined;
 
     var nodeUrl = "";
-    (function (node) {
-        if (node[0] == "admin") {
+    (function(node){
+        if (node[0] == "admin"){
             luciLocation = [node[1], node[2]];
-        } else {
+        }else{
             luciLocation = node;
         }
 
-        for (var i in luciLocation) {
+        for(var i in luciLocation){
             nodeUrl += luciLocation[i];
-            if (i != luciLocation.length - 1) {
+            if (i != luciLocation.length - 1){
                 nodeUrl += "/";
             }
         }
@@ -77,7 +63,6 @@
         $(".main > .main-left > .nav > .slide > .menu").removeClass("active");
         $(".main > .main-left > .nav > .slide > .menu").each(function () {
             var ulNode = $(this);
-
             ulNode.next().find("a").each(function () {
                 var that = $(this);
                 var href = that.attr("href");
@@ -117,20 +102,7 @@
 
             return false;
         }
-
     });
-
-
-
-
-// define what element should be observed by the observer
-// and what types of mutations trigger the callback
-    if ($("#cbi-dhcp-lan-ignore").length > 0) {
-        observer.observe(document.getElementById("cbi-dhcp-lan-ignore"), {
-            subtree: true,
-            attributes: true
-        });
-    }
 
     /**
      * hook menu click and add the hash
@@ -172,7 +144,7 @@
         mainNodeName = mainNodeName.replace(/[ \t\n\r\/]+/g, "_").toLowerCase();
         $("body").addClass(mainNodeName);
     }
-    $(".cbi-button-up").val("");
+    $(".cbi-button-up").val("");
     $(".cbi-button-down").val("");
 
 
@@ -200,16 +172,12 @@
     $(".showSide").click(function () {
         if (showSide) {
             $(".darkMask").stop(true).fadeOut("fast");
-            $(".main-left").stop(true).animate({
-                width: "0"
-            }, "fast");
+            $(".main-left").width(0);
             $(".main-right").css("overflow-y", "auto");
             showSide = false;
         } else {
             $(".darkMask").stop(true).fadeIn("fast");
-            $(".main-left").stop(true).animate({
-                width: "15rem"
-            }, "fast");
+            $(".main-left").width("15rem");
             $(".main-right").css("overflow-y", "hidden");
             showSide = true;
         }
@@ -220,9 +188,7 @@
         if (showSide) {
             showSide = false;
             $(".darkMask").stop(true).fadeOut("fast");
-            $(".main-left").stop(true).animate({
-                width: "0"
-            }, "fast");
+            $(".main-left").width(0);
             $(".main-right").css("overflow-y", "auto");
         }
     });
@@ -247,7 +213,7 @@
     $(".cbi-section-table-titles, .cbi-section-table-descr, .cbi-section-descr").each(function () {
         var that = $(this);
         if (that.text().trim() == "") {
-            that.css("display", "none");
+            that.css("padding", "0px");
         }
     });
 
@@ -284,5 +250,4 @@
                 break;
         }
     }
-
 })(jQuery);
