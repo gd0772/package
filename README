@@ -1,7 +1,5 @@
--#. 自用不常更新 插件均搜集于互联网！
+#. 自用不常更新 插件均搜集于互联网！
 
-luci-passwall                      GFW
-luci-ssrplus                       GFW
 luci-theme-opentopd                主题
 luci-app-timecontrol               时间控制
 luci-app-control-weburl            管控过滤
