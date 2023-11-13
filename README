@@ -1,4 +1,12 @@
--# 插件介绍
+-#. 自用不常更新 插件均搜集于互联网！
 
- 1. 自用不常更新，感谢各位大神 插件原作者 所做出的的努力和贡献！ 
-
+luci-passwall                      GFW
+luci-ssrplus                       GFW
+luci-theme-opentopd                主题
+luci-app-timecontrol               时间控制
+luci-app-control-weburl            管控过滤
+luci-app-control-webrestriction    访问限制
+luci-app-control-timewol           定时唤醒
+luci-app-poweroff                  关机
+luci-app-partexp                   分区扩容
+luci-app-filebrowser               文件管理
