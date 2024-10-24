@@ -17,8 +17,20 @@ bold_off = [[</strong>]]
 
 local op_mode = string.sub(luci.sys.exec('uci get openclash.config.operation_mode 2>/dev/null'),0,-2)
 if not op_mode then op_mode = "redir-host" end
-local lan_ip = SYS.exec("uci -q get network.lan.ipaddr |awk -F '/' '{print $1}' 2>/dev/null |tr -d '\n' || ip address show $(uci -q -p /tmp/state get network.lan.ifname || uci -q -p /tmp/state get network.lan.device) | grep -w 'inet'  2>/dev/null |grep -Eo 'inet [0-9\.]+' | awk '{print $2}' | tr -d '\n' || ip addr show 2>/dev/null | grep -w 'inet' | grep 'global' | grep 'brd' | grep -Eo 'inet [0-9\.]+' | awk '{print $2}' | head -n 1 | tr -d '\n'")
+local lan_int_name = uci:get("openclash", "config", "lan_interface_name") or "0"
 
+local lan_ip
+if lan_int_name == "0" then
+	lan_ip = SYS.exec("uci -q get network.lan.ipaddr |awk -F '/' '{print $1}' 2>/dev/null |tr -d '\n'")
+else
+	lan_ip = SYS.exec(string.format("ip address show %s | grep -w 'inet' 2>/dev/null |grep -Eo 'inet [0-9\.]+' | awk '{print $2}' | tr -d '\n'", lan_int_name))
+end
+if not lan_ip or lan_ip == "" then
+	lan_ip = luci.sys.exec("ip address show $(uci -q -p /tmp/state get network.lan.ifname || uci -q -p /tmp/state get network.lan.device) | grep -w 'inet'  2>/dev/null |grep -Eo 'inet [0-9\.]+' | awk '{print $2}' | tr -d '\n'")
+end
+if not lan_ip or lan_ip == "" then
+	lan_ip = luci.sys.exec("ip addr show 2>/dev/null | grep -w 'inet' | grep 'global' | grep 'brd' | grep -Eo 'inet [0-9\.]+' | awk '{print $2}' | head -n 1 | tr -d '\n'")
+end
 m = Map("openclash", translate("Overwrite Settings"))
 m.pageaction = false
 m.description = translate("Note: To restore the default configuration, try accessing:").." <a href='javascript:void(0)' onclick='javascript:restore_config(this)'>http://"..lan_ip.."/cgi-bin/luci/admin/services/openclash/restore</a>"
@@ -69,7 +81,7 @@ o:value("http://captive.apple.com/generate_204")
 o.default = "0"
 
 o = s:taboption("settings", Value, "github_address_mod", translate("Github Address Modify"))
-o.description = translate("Modify The Github Address In The Config And OpenClash With Proxy(CDN) To Prevent File Download Faild. Format Reference:").." ".."<a href='javascript:void(0)' onclick='javascript:return winOpen(\"https://ghproxy.com/\")'>https://ghproxy.com/</a>"
+o.description = translate("Modify The Github Address In The Config And OpenClash With Proxy(CDN) To Prevent File Download Faild. Format Reference:").." ".."<a href='javascript:void(0)' onclick='javascript:return winOpen(\"https://mirror.ghproxy.com/\")'>https://mirror.ghproxy.com/</a>"
 o:value("0", translate("Disable"))
 o:value("https://fastly.jsdelivr.net/")
 o:value("https://testingcf.jsdelivr.net/")
@@ -135,26 +147,9 @@ o = s:taboption("dns", Flag, "enable_custom_dns", font_red..bold_on..translate("
 o.description = font_red..bold_on..translate("Set OpenClash Upstream DNS Resolve Server")..bold_off..font_off
 o.default = 0
 
----- Fallback DNS Proxy Group
-o = s:taboption("dns", Value, "proxy_dns_group", font_red..bold_on..translate("Fallback DNS Proxy Group (Support Regex)")..bold_off..font_off)
-o.description = translate("Group Use For Proxy The Fallback DNS, Preventing DNS Lookup Failures")..translate("(Only Meta Core)")
-local groupnames,filename
-filename = m.uci:get("openclash", "config", "config_path")
-if filename then
-	groupnames = SYS.exec(string.format('ruby -ryaml -rYAML -I "/usr/share/openclash" -E UTF-8 -e "YAML.load_file(\'%s\')[\'proxy-groups\'].each do |i| puts i[\'name\']+\'##\' end" 2>/dev/null',filename))
-	if groupnames then
-		for groupname in string.gmatch(groupnames, "([^'##\n']+)##") do
-			if groupname ~= nil and groupname ~= "" then
-				o:value(groupname)
-			end
-		end
-	end
-end
-
-o:value("DIRECT")
-o:value("Disable", translate("Disable"))
-o.default = "Disable"
-o.rempty = false
+o = s:taboption("dns", Flag, "enable_respect_rules", font_red..bold_on..translate("Respect Rules")..bold_off..font_off)
+o.description = font_red..bold_on..translate("Whether or not The Connection to the DNS Server Follow the Rules in Config")..bold_off..font_off
+o.default = 0
 
 o = s:taboption("dns", Flag, "append_wan_dns", translate("Append Upstream DNS"))
 o.description = translate("Append The Upstream Assigned DNS And Gateway IP To The Nameserver")
@@ -213,6 +208,13 @@ end
 if op_mode == "fake-ip" then
 o = s:taboption("dns", Flag, "custom_fakeip_filter", translate("Fake-IP-Filter"))
 o.default = 0
+
+o = s:taboption("dns", ListValue, "custom_fakeip_filter_mode", translate("Fake-IP-Filter-Mode"))
+o.description = translate("Fake-IP is not returned if the matching succeeds when blacklist mode or Fake-IP is returned if the matching succeeds when whitelist mode")
+o.default = "blacklist"
+o:value("blacklist", translate("Blacklist Mode"))
+o:value("whitelist", translate("Whitelist Mode"))
+o:depends("custom_fakeip_filter", "1")
 
 custom_fake_black = s:taboption("dns", Value, "custom_fake_filter")
 custom_fake_black.template = "cbi/tvalue"
@@ -421,7 +423,7 @@ o.default = 0
 custom_rules = s:taboption("rules", Value, "custom_rules")
 custom_rules:depends("enable_custom_clash_rules", 1)
 custom_rules.template = "cbi/tvalue"
-custom_rules.description = font_green..bold_on..translate("(Priority)")..bold_off..font_off.." "..translate("Custom Rules Here, For More Go:").." ".."<a href='javascript:void(0)' onclick='javascript:return winOpen(\"https://lancellc.gitbook.io/clash/clash-config-file/rules\")'>https://lancellc.gitbook.io/clash/clash-config-file/rules</a>".." ,"..translate("IP To CIDR:").." ".."<a href='javascript:void(0)' onclick='javascript:return winOpen(\"http://ip2cidr.com\")'>http://ip2cidr.com</a>"
+custom_rules.description = font_green..bold_on..translate("(Priority)")..bold_off..font_off.." "..translate("Custom Rules Here, For More Go:").." ".."<a href='javascript:void(0)' onclick='javascript:return winOpen(\"https://wiki.metacubex.one/config/rules/\")'>https://wiki.metacubex.one/config/rules/</a>".." ,"..translate("IP To CIDR:").." ".."<a href='javascript:void(0)' onclick='javascript:return winOpen(\"http://ip2cidr.com\")'>http://ip2cidr.com</a>"
 custom_rules.rows = 20
 custom_rules.wrap = "off"
 
@@ -441,7 +443,7 @@ end
 custom_rules_2 = s:taboption("rules", Value, "custom_rules_2")
 custom_rules_2:depends("enable_custom_clash_rules", 1)
 custom_rules_2.template = "cbi/tvalue"
-custom_rules_2.description = font_green..bold_on..translate("(Extended)")..bold_off..font_off.." "..translate("Custom Rules Here, For More Go:").." ".."<a href='javascript:void(0)' onclick='javascript:return winOpen(\"https://lancellc.gitbook.io/clash/clash-config-file/rules\")'>https://lancellc.gitbook.io/clash/clash-config-file/rules</a>".." ,"..translate("IP To CIDR:").." ".."<a href='javascript:void(0)' onclick='javascript:return winOpen(\"http://ip2cidr.com\")'>http://ip2cidr.com</a>"
+custom_rules_2.description = font_green..bold_on..translate("(Extended)")..bold_off..font_off.." "..translate("Custom Rules Here, For More Go:").." ".."<a href='javascript:void(0)' onclick='javascript:return winOpen(\"https://wiki.metacubex.one/config/rules/\")'>https://wiki.metacubex.one/config/rules/</a>".." ,"..translate("IP To CIDR:").." ".."<a href='javascript:void(0)' onclick='javascript:return winOpen(\"http://ip2cidr.com\")'>http://ip2cidr.com</a>"
 custom_rules_2.rows = 20
 custom_rules_2.wrap = "off"
 
@@ -561,10 +563,6 @@ o = ss:option(DummyValue, "rule_name", translate("Other Rules Name"))
 function o.cfgvalue(...)
 	if Value.cfgvalue(...) == "lhie1" then
 		return translate("lhie1 Rules")
-	elseif Value.cfgvalue(...) == "ConnersHua" then
-		return translate("ConnersHua(Provider-type) Rules")
-	elseif Value.cfgvalue(...) == "ConnersHua_return" then
-		return translate("ConnersHua Return Rules")
 	else
 		return translate("None")
 	end

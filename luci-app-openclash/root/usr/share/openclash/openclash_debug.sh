@@ -14,7 +14,6 @@ del_lock() {
 
 DEBUG_LOG="/tmp/openclash_debug.log"
 LOGTIME=$(echo $(date "+%Y-%m-%d %H:%M:%S"))
-uci -q commit openclash
 set_lock
 
 enable_custom_dns=$(uci -q get openclash.config.enable_custom_dns)
@@ -33,8 +32,6 @@ RAW_CONFIG_FILE=$(uci -q get openclash.config.config_path)
 CONFIG_FILE="/etc/openclash/$(uci -q get openclash.config.config_path |awk -F '/' '{print $5}' 2>/dev/null)"
 core_model=$(uci -q get openclash.config.core_version)
 cpu_model=$(opkg status libc 2>/dev/null |grep 'Architecture' |awk -F ': ' '{print $2}' 2>/dev/null)
-core_version=$(/etc/openclash/core/clash -v 2>/dev/null |awk -F ' ' '{print $2}' 2>/dev/null)
-core_tun_version=$(/etc/openclash/core/clash_tun -v 2>/dev/null |awk -F ' ' '{print $2}' 2>/dev/null)
 core_meta_version=$(/etc/openclash/core/clash_meta -v 2>/dev/null |awk -F ' ' '{print $3}' |head -1 2>/dev/null)
 servers_update=$(uci -q get openclash.config.servers_update)
 mix_proxies=$(uci -q get openclash.config.mix_proxies)
@@ -45,7 +42,12 @@ router_self_proxy=$(uci -q get openclash.config.router_self_proxy)
 core_type=$(uci -q get openclash.config.core_type || echo "Dev")
 da_password=$(uci -q get openclash.config.dashboard_password)
 cn_port=$(uci -q get openclash.config.cn_port)
-lan_ip=$(uci -q get network.lan.ipaddr |awk -F '/' '{print $1}' 2>/dev/null || ip address show $(uci -q -p /tmp/state get network.lan.ifname || uci -q -p /tmp/state get network.lan.device) | grep -w "inet"  2>/dev/null |grep -Eo 'inet [0-9\.]+' | awk '{print $2}' || ip addr show 2>/dev/null | grep -w 'inet' | grep 'global' | grep 'brd' | grep -Eo 'inet [0-9\.]+' | awk '{print $2}' | head -n 1)
+lan_interface_name=$(uci -q get openclash.config.lan_interface_name || echo "0")
+if [ "$lan_interface_name" = "0" ]; then
+   lan_ip=$(uci -q get network.lan.ipaddr |awk -F '/' '{print $1}' 2>/dev/null || ip address show $(uci -q -p /tmp/state get network.lan.ifname || uci -q -p /tmp/state get network.lan.device) | grep -w "inet"  2>/dev/null |grep -Eo 'inet [0-9\.]+' | awk '{print $2}' || ip addr show 2>/dev/null | grep -w 'inet' | grep 'global' | grep 'brd' | grep -Eo 'inet [0-9\.]+' | awk '{print $2}' | head -n 1)
+else
+   lan_ip=$(ip address show $(uci -q -p $lan_interface_name) | grep -w "inet"  2>/dev/null |grep -Eo 'inet [0-9\.]+' | awk '{print $2}')
+fi
 dnsmasq_default_resolvfile=$(uci -q get openclash.config.default_resolvfile)
 
 if [ -z "$RAW_CONFIG_FILE" ] || [ ! -f "$RAW_CONFIG_FILE" ]; then
@@ -62,11 +64,11 @@ fi
 
 ts_cf()
 {
-	if [ "$1" != 1 ]; then
+	if [ "$1" = "0" ] || [ -z "$1" ]; then
 	   echo "停用"
 	else
 	   echo "启用"
-  fi
+   fi
 }
 
 ts_re()
@@ -181,51 +183,6 @@ cat >> "$DEBUG_LOG" <<-EOF
 
 #下方无法显示内核版本号时请确认您的内核版本是否正确或者有无权限
 EOF
-
-cat >> "$DEBUG_LOG" <<-EOF
-Tun内核版本: $core_tun_version
-EOF
-if [ ! -f "/etc/openclash/core/clash_tun" ]; then
-cat >> "$DEBUG_LOG" <<-EOF
-Tun内核文件: 不存在
-EOF
-else
-cat >> "$DEBUG_LOG" <<-EOF
-Tun内核文件: 存在
-EOF
-fi
-if [ ! -x "/etc/openclash/core/clash_tun" ]; then
-cat >> "$DEBUG_LOG" <<-EOF
-Tun内核运行权限: 否
-EOF
-else
-cat >> "$DEBUG_LOG" <<-EOF
-Tun内核运行权限: 正常
-EOF
-fi
-
-cat >> "$DEBUG_LOG" <<-EOF
-
-Dev内核版本: $core_version
-EOF
-if [ ! -f "/etc/openclash/core/clash" ]; then
-cat >> "$DEBUG_LOG" <<-EOF
-Dev内核文件: 不存在
-EOF
-else
-cat >> "$DEBUG_LOG" <<-EOF
-Dev内核文件: 存在
-EOF
-fi
-if [ ! -x "/etc/openclash/core/clash" ]; then
-cat >> "$DEBUG_LOG" <<-EOF
-Dev内核运行权限: 否
-EOF
-else
-cat >> "$DEBUG_LOG" <<-EOF
-Dev内核运行权限: 正常
-EOF
-fi
 
 cat >> "$DEBUG_LOG" <<-EOF
 
@@ -381,7 +338,7 @@ EOF
    for nft in "input" "forward" "dstnat" "srcnat" "nat_output" "mangle_prerouting" "mangle_output"; do
       nft list chain inet fw4 "$nft" >> "$DEBUG_LOG" 2>/dev/null
    done >/dev/null 2>&1
-   for nft in "openclash" "openclash_mangle" "openclash_mangle_output" "openclash_output" "openclash_post" "openclash_wan_input" "openclash_dns_hijack" "openclash_dns_redirect" "openclash_mangle_v6" "openclash_mangle_output_v6" "openclash_post_v6" "openclash_wan6_input"; do
+   for nft in "openclash" "openclash_mangle" "openclash_mangle_output" "openclash_output" "openclash_post" "openclash_wan_input" "openclash_dns_hijack" "openclash_dns_redirect" "openclash_v6" "openclash_mangle_v6" "openclash_mangle_output_v6" "openclash_output_v6" "openclash_post_v6" "openclash_wan6_input"; do
       nft list chain inet fw4 "$nft" >> "$DEBUG_LOG" 2>/dev/null
    done >/dev/null 2>&1
 fi
@@ -485,7 +442,7 @@ cat >> "$DEBUG_LOG" <<-EOF
 #===================== 测试本机网络下载(raw.githubusercontent.com) =====================#
 
 EOF
-VERSION_URL="https://raw.githubusercontent.com/vernesong/OpenClash/master/version"
+VERSION_URL="https://raw.githubusercontent.com/vernesong/OpenClash/refs/heads/master/LICENSE"
 if pidof clash >/dev/null; then
    curl -SsIL -m 3 --retry 2 "$VERSION_URL" >> "$DEBUG_LOG" 2>/dev/null
 else
@@ -499,9 +456,10 @@ cat >> "$DEBUG_LOG" <<-EOF
 EOF
 
 if pidof clash >/dev/null; then
-   curl -sL -m 3 -H "Content-Type: application/json" -H "Authorization: Bearer ${da_password}" -XPATCH http://${lan_ip}:${cn_port}/configs -d '{"log-level": "debug"}'
+   curl -SsL -m 3 -H "Content-Type: application/json" -H "Authorization: Bearer ${da_password}" -XPATCH http://${lan_ip}:${cn_port}/configs -d '{"log-level": "debug"}' >/dev/null
    sleep 10
 fi
+
 tail -n 100 "/tmp/openclash.log" >> "$DEBUG_LOG" 2>/dev/null
 cat >> "$DEBUG_LOG" <<-EOF
 
@@ -509,7 +467,7 @@ cat >> "$DEBUG_LOG" <<-EOF
 
 EOF
 if pidof clash >/dev/null; then
-   curl -sL -m 3 -H "Content-Type: application/json" -H "Authorization: Bearer ${da_password}" -XPATCH http://${lan_ip}:${cn_port}/configs -d '{"log-level": "silent"}'
+   curl -SsL -m 3 -H "Content-Type: application/json" -H "Authorization: Bearer ${da_password}" -XPATCH http://${lan_ip}:${cn_port}/configs -d '{"log-level": "silent"}' >/dev/null
 fi
 
 cat >> "$DEBUG_LOG" <<-EOF
