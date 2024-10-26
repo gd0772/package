@@ -1,6 +1,0 @@
-#!/bin/sh
-uci batch <<-EOF
-	set luci.themes.ATMaterial_Brown=/luci-static/atmaterial_Brown
-	commit luci
-EOF
-exit 0
